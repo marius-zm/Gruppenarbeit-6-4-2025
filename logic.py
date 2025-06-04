@@ -9,30 +9,38 @@ import random
 # Gif
 def show_gif():
     gif = tk.Toplevel()
-    gif.update()
-    width = gif.winfo_width()
-    height = gif.winfo_height()
-    gif.geometry = (f"{width}x{height}")
-    
-    label = tk.Label(gif)
-    label.grid()
+    gif.title("GIF Viewer")
+    gif.geometry("400x300")  # Startgröße
 
-    
+    label = tk.Label(gif, bg="black")
+    label.pack(fill="both", expand=True)
 
+    # Lade das GIF
     img = Image.open("./Gifs/giphy.gif")
+    frames = [frame.copy().convert("RGBA") for frame in ImageSequence.Iterator(img)]
 
-    frames = [
-        ImageTk.PhotoImage(frame.copy().convert("RGBA"))
-        for frame in ImageSequence.Iterator(img)
-    ]
+    # Erzeuge Originalgrößen für spätere Skalierung
+    original_frames = frames.copy()
 
     def update(ind):
-        frame = frames[ind]
-        label.config(image=frame)
-        ind = (ind + 1) % len(frames)
-        gif.after(100, update, ind)
+        frame = original_frames[ind]
+
+        # Hol aktuelle Größe des Fensters
+        width = label.winfo_width()
+        height = label.winfo_height()
+
+        # Skaliere Frame auf Fenstergröße (ohne Seitenverhältnis)
+        resized = frame.resize((width, height), Image.Resampling.LANCZOS)
+        tk_frame = ImageTk.PhotoImage(resized)
+
+        label.img = tk_frame  # Verhindere Garbage Collection
+        label.config(image=tk_frame)
+
+        next_ind = (ind + 1) % len(original_frames)
+        gif.after(100, update, next_ind)
 
     update(0)
+
 
 
 # Sound

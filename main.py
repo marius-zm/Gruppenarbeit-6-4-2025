@@ -47,4 +47,5 @@ change_color_frames.grid(row=0, column=1)
 change_color_buttons = ttk.Button(bottom_frame, text="Rainbow Buttons", command=lambda: logic.change_color_buttons(style), style="Custom.TButton")
 change_color_buttons.grid(row=0, column=2)
 
+
 root.mainloop()
