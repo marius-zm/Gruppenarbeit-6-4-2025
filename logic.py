@@ -1,10 +1,27 @@
 import os
 import pygame
+import tkinter as tk
 from tkinter import filedialog as fd, messagebox as mb
 from tkinter import ttk
+from PIL import Image, ImageTk, ImageSequence
 
 def show_gif():
-    print("gif")
+    gif = tk.Toplevel()
+    gif.geometry("400x300")
+
+    label = tk.Label(gif)
+    label.grid()
+
+    img = Image.open("giphy.gif")
+
+    frames = [ImageTk.PhotoImage(frame.copy().convert("RGBA")) for frame in ImageSequence.Iterator(img)]
+
+    def update(ind):
+        frame = frames[ind]
+        label.config(image=frame)
+        ind = (ind + 1) % len(frames)
+        gif.after(100, update, ind)
+    update(0)
 
 def play_sound():
     pygame.mixer.music.load("./Sounds/file_example_MP3_700KB.mp3")
